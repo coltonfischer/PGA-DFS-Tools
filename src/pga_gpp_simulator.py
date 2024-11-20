@@ -339,7 +339,10 @@ class PGA_GPP_Simulator:
                         self.seen_lineups[lineup_set] = 1
                         self.seen_lineups_ix[lineup_set] = j
                         j += 1
-        print("loaded {} lineups".format(j))
+        # Update lineup duplication counts
+        for lineup_set in self.seen_lineups:
+            self.field_lineups[self.seen_lineups_ix[lineup_set]]["Count"] = self.seen_lineups[lineup_set]
+        print("loaded {} lineups".format(sum(entry["Count"] for entry in self.field_lineups.values())))
         # print(self.field_lineups)
 
     @staticmethod
@@ -430,7 +433,7 @@ class PGA_GPP_Simulator:
         return lu
 
     def generate_field_lineups(self):
-        diff = self.field_size - len(self.field_lineups)
+        diff = self.field_size - sum(entry["Count"] for entry in self.field_lineups.values())
         if diff <= 0:
             print(
                 "supplied lineups >= contest field size. only retrieving the first "
